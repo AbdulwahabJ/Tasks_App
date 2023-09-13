@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:tasks_app/cubit/add_task_cubit.dart';
 import 'package:tasks_app/views/add_task_screen.dart';
 import 'package:tasks_app/views/home_screen.dart';
 
@@ -20,13 +22,18 @@ class TaskApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        HomeScreen.id: (context) => const HomeScreen(),
-        AddTaskScreen.id: (context) => const AddTaskScreen(),
-      },
-      initialRoute: HomeScreen.id,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AddTaskCubit()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        routes: {
+          HomeScreen.id: (context) => const HomeScreen(),
+          AddTaskScreen.id: (context) => const AddTaskScreen(),
+        },
+        initialRoute: HomeScreen.id,
+      ),
     );
   }
 }
