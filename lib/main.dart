@@ -4,11 +4,13 @@ import 'package:tasks_app/views/add_task_screen.dart';
 import 'package:tasks_app/views/home_screen.dart';
 
 import 'constant.dart';
+import 'models/task_model.dart';
 
 void main() async {
   //
   await Hive.initFlutter();
   await Hive.openBox(kTaskBox);
+  Hive.registerAdapter(TaskModelAdapter());
   //
   runApp(const TaskApp());
 }
