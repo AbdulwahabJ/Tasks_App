@@ -4,20 +4,20 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import '../constant.dart';
 
 class AddTaskDtePicker extends StatefulWidget {
-  const AddTaskDtePicker({super.key});
+  const AddTaskDtePicker({super.key, required onDateChange});
 
   @override
   State<AddTaskDtePicker> createState() => _AddTaskDtePickerState();
 }
+
+void Function(DateTime)? onDateChange;
 
 class _AddTaskDtePickerState extends State<AddTaskDtePicker> {
   @override
   Widget build(BuildContext context) {
     return EasyDateTimeLine(
       initialDate: DateTime.now(),
-      onDateChange: (selectedDate) {
-        //`selectedDate` the new date selected.
-      },
+      onDateChange: onDateChange,
       activeColor: kSecondaryColor,
       headerProps: const EasyHeaderProps(
         selectedDateStyle: TextStyle(

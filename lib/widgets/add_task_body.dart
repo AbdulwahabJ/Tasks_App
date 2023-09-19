@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks_app/cubit/add_task_cubit.dart';
+import 'package:tasks_app/models/task_model.dart';
 
 import '../helper/add_task_date_picker.dart';
 import '../helper/hour_picker.dart';
+import 'add_task_color.dart';
 import 'color_list_view.dart';
 import 'custom_text_button.dart';
 import 'custom_text_field.dart';
@@ -21,9 +25,23 @@ class _AddTaskBodyState extends State<AddTaskBody> {
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   //
   String? taskContent, startTime, endTime;
+  int taskColor = 0;
+  DateTime? taskDateTime;
+  //
+  List<Color> colors = [
+    const Color(0xFF7A63FF),
+    const Color(0xFF51BEFF),
+    const Color(0xFF51CBC3),
+    const Color(0xFFFFA79B),
+  ];
+  //
+  int count = 0;
+  int colorCounter = 0;
   //
   @override
   Widget build(BuildContext context) {
+    //
+
     return Form(
       key: formKey,
       autovalidateMode: autovalidateMode,
@@ -32,7 +50,11 @@ class _AddTaskBodyState extends State<AddTaskBody> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
-            const AddTaskDtePicker(),
+            AddTaskDtePicker(
+              onDateChange: (value) {
+                taskDateTime = value;
+              },
+            ),
             const SizedBox(height: 5),
             const Padding(
               padding: EdgeInsets.only(top: 20, left: 28),
@@ -48,7 +70,7 @@ class _AddTaskBodyState extends State<AddTaskBody> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6),
               child: CustomTextField(onSaved: (value) {
-                taskContent = value;
+                taskContent = value!;
               }),
             ),
             const SizedBox(height: 10),
@@ -73,16 +95,24 @@ class _AddTaskBodyState extends State<AddTaskBody> {
                 SizedBox(height: 35),
               ],
             ),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 SizedBox(
                   width: 150,
-                  child: HourPicker(),
+                  child: HourPicker(
+                    onSaved: (value) {
+                      startTime = value;
+                    },
+                  ),
                 ),
                 SizedBox(
                   width: 150,
-                  child: HourPicker(),
+                  child: HourPicker(
+                    onSaved: (value) {
+                      endTime = value;
+                    },
+                  ),
                 ),
               ],
             ),
@@ -98,10 +128,31 @@ class _AddTaskBodyState extends State<AddTaskBody> {
               ),
             ),
             const SizedBox(height: 10),
-            const SizedBox(
-              height: 20 * 2,
-              child: ColorListView(),
-            ),
+            SizedBox(
+                height: 20 * 2,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ListView.builder(
+                      itemCount: 5,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            colorCounter = index;
+                            setState(() {});
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: ColorItem(
+                              isActive: colorCounter == index,
+                              color: colors[
+                                  count == colors.length ? count = 0 : count++],
+                            ),
+                          ),
+                        );
+                      }),
+                )),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -110,6 +161,17 @@ class _AddTaskBodyState extends State<AddTaskBody> {
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
+
+                      var taskModel = TaskModel(
+                        taskContent: taskContent!,
+                        startTime: startTime!,
+                        endTime: endTime!,
+                        taskState: TaskState.upcoming,
+                        taskColor: colors[colorCounter].value,
+                        taskDate: taskDateTime!,
+                      );
+
+                      BlocProvider.of<AddTaskCubit>(context).addTask(taskModel);
                     } else {
                       autovalidateMode = AutovalidateMode.disabled;
                       setState(() {});

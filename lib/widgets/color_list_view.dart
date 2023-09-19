@@ -12,7 +12,6 @@ class ColorListView extends StatefulWidget {
 }
 
 class _ColorListViewState extends State<ColorListView> {
-  int colorCounter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +22,8 @@ class _ColorListViewState extends State<ColorListView> {
       const Color(0xFFFFA79B),
     ];
     int count = 0;
+      int colorCounter = 0;
+
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),

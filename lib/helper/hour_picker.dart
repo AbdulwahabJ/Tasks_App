@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HourPicker extends StatefulWidget {
-  const HourPicker({super.key});
+  const HourPicker({super.key, required onSaved});
 
   @override
   State<HourPicker> createState() => _HourPickerState();
